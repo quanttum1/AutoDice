@@ -1,0 +1,28 @@
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.vsp
+*.vspx
+*.vspscc
+*.vssscc
+*.ncb
+*.sdf
+*.cache
+*.pdb
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+!packages/repositories.config
+
+# Logs and temporary files
+*.log
+*.tlog
+*.tmp
+*.bak
+*.swp
