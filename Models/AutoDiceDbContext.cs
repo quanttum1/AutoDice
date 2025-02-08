@@ -21,10 +21,15 @@ public class AutoDiceDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<UserSession>()
-            .HasOne(at => at.Player)
-            .WithMany(p => p.UserSessions)
-            .HasForeignKey(us => us.PlayerId);
+        modelBuilder.Entity<WebUserSession>()
+            .HasOne(wus => wus.Player)
+            .WithMany(p => p.WebUserSessions)
+            .HasForeignKey(wus => wus.PlayerId);
+
+        modelBuilder.Entity<TgUser>()
+            .HasOne(tu => tu.Player)
+            .WithMany(p => p.TgUsers)
+            .HasForeignKey(tu => tu.PlayerId);
 
         modelBuilder.Entity<Character>()
             .HasOne(c => c.Player)

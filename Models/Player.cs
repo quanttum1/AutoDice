@@ -7,5 +7,6 @@ public class Player
     public bool IsGameMaster { get; set; }
 
     public ICollection<Character> Characters { get; set; } = new List<Character>();
-    public ICollection<UserSession> UserSessions { get; set; } = new List<UserSession>();
+    public ICollection<WebUserSession> WebUserSessions { get; set; } = new List<WebUserSession>();
+    public ICollection<TgUser> TgUsers { get; set; } = new List<TgUser>();
 }

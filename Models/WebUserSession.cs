@@ -1,6 +1,6 @@
 namespace AutoDice.Models;
 
-public class UserSession
+public class WebUserSession
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
