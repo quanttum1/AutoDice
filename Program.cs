@@ -8,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddMemoryCache(); // For AuthCodeService
+builder.Services.AddSingleton<AuthCodeService>();
+
 string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 string directoryPath = Path.Combine(homeDirectory, "AutoDice");
 

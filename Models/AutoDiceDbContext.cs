@@ -21,7 +21,11 @@ public class AutoDiceDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Character → Player Relationship
+        modelBuilder.Entity<UserSession>()
+            .HasOne(at => at.Player)
+            .WithMany(p => p.UserSessions)
+            .HasForeignKey(us => us.PlayerId);
+
         modelBuilder.Entity<Character>()
             .HasOne(c => c.Player)
             .WithMany(p => p.Characters)
