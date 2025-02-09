@@ -11,3 +11,8 @@ body {
 .nav-link {
     color: #fff;
 }
+
+.logo {
+    height: 80px;
+    width: auto;
+}
