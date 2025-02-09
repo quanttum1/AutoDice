@@ -22,9 +22,16 @@ if (!Directory.Exists(directoryPath))
 string databasePath = Path.Combine(directoryPath, "database.db");
 
 builder.Services.AddDbContext<AutoDiceDbContext>(options =>
-    options.UseSqlite($"Data Source={databasePath};Version=3;"));
+    options.UseSqlite($"Data Source={databasePath}"));
 
 var app = builder.Build();
+
+// Ensure the database is created
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
+    db.Database.Migrate(); // Apply migrations automatically
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
