@@ -1,6 +1,6 @@
 namespace AutoDice.Models;
 
-public class Character
+public class CharacterEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

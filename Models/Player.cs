@@ -6,7 +6,7 @@ public class Player
     public string Name { get; set; } = string.Empty;
     public bool IsGameMaster { get; set; }
 
-    public ICollection<Character> Characters { get; set; } = new List<Character>();
+    public ICollection<CharacterEntity> Characters { get; set; } = new List<CharacterEntity>();
     public ICollection<WebUserSession> WebUserSessions { get; set; } = new List<WebUserSession>();
     public ICollection<TgUser> TgUsers { get; set; } = new List<TgUser>();
 }

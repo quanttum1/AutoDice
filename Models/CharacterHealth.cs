@@ -3,7 +3,7 @@ namespace AutoDice.Models;
 public class CharacterHealth
 {
     public int CharacterId { get; set; }
-    public Character Character { get; set; } = null!;
+    public CharacterEntity Character { get; set; } = null!;
 
     public int HealthTypeId { get; set; }
     public HealthType HealthType { get; set; } = null!;

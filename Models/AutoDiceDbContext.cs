@@ -5,7 +5,7 @@ namespace AutoDice.Models;
 public class AutoDiceDbContext : DbContext
 {
     public DbSet<Player> Players { get; set; }
-    public DbSet<Character> Characters { get; set; }
+    public DbSet<CharacterEntity> Characters { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<SkillTree> SkillTrees { get; set; }
     public DbSet<CharacterSkill> CharacterSkills { get; set; }
@@ -31,7 +31,7 @@ public class AutoDiceDbContext : DbContext
             .WithMany(p => p.TgUsers)
             .HasForeignKey(tu => tu.PlayerId);
 
-        modelBuilder.Entity<Character>()
+        modelBuilder.Entity<CharacterEntity>()
             .HasOne(c => c.Player)
             .WithMany(p => p.Characters)
             .HasForeignKey(c => c.PlayerId)
