@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "Bootstrap";
+}
+
+<div class="text-center">
+    <input type="text" id="tgTokenInput" placeholder="Your Telegram API key">
+    <button onclick="submit()">Submit</button>
+    <p id="errorMessage" style="color: red;"></p>
+</div>
+
+<script>
+    async function submit() {
+        let inputElement = document.getElementById("tgTokenInput");
+        let errorElement = document.getElementById("errorMessage");
+        let inputValue = inputElement.value;
+
+        errorElement.textContent = ""; // Clear previous errors
+
+        let response = await fetch('/Submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ value: inputValue })
+        });
+
+        if (response.ok) {
+            inputElement.value = ""; // Clear input on success
+        } else {
+            let errorText = await response.text(); // Get error message from backend
+            errorElement.textContent = errorText || "An error occurred.";
+        }
+    }
+</script>

@@ -43,12 +43,12 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Ensure the database is created
-// using (var scope = app.Services.CreateScope())
-// {
-//     var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
-//     db.Database.Migrate(); // Apply migrations automatically
-// }
+Ensure the database is created
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
+    db.Database.Migrate(); // Apply migrations automatically
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

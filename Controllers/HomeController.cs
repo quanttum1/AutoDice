@@ -20,7 +20,10 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        ViewData["IsBotRunning"] = _bot.IsRunning;
+        if (!_bot.IsRunning)
+        {
+            return RedirectToAction("Index", "Bootstrap");
+        }
         return View();
     }
 

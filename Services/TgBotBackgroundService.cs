@@ -36,27 +36,34 @@ public class TgBotBackgroundService : BackgroundService, ITgBot
 
     public bool TryStart()
     {
-        using var scope = _serviceProvider.CreateScope();
-
-        if (IsRunning) return true; // Prevent multiple starts
-        _logger.LogInformation("Trying to run the bot...");
-
-        var repository = scope.ServiceProvider.GetRequiredService<IRepository<TgToken>>();
-        List<TgToken> tokens = new(repository.GetAll());
-        if (tokens.Count == 0)
+        try 
         {
-            _logger.LogError("No API key was found, the bot wasn't started");
+            using var scope = _serviceProvider.CreateScope();
+
+            if (IsRunning) return true; // Prevent multiple starts
+            _logger.LogInformation("Trying to run the bot...");
+
+            var repository = scope.ServiceProvider.GetRequiredService<IRepository<TgToken>>();
+            List<TgToken> tokens = new(repository.GetAll());
+            if (tokens.Count == 0)
+            {
+                _logger.LogError("No API key was found, the bot wasn't started");
+                return false;
+            }
+            string apiKey = tokens.First().Token;
+
+            _logger.LogInformation("Bot was launched");
+
+            _bot = new TelegramBotClient(apiKey, cancellationToken: _cts.Token);
+            _bot.OnMessage += OnMessage;
+
+            _isRunning = true;
+            return true;
+        } catch (Exception ex)
+        {
+            _logger.LogError($"Error occurred when tried to start the bot: {ex.ToString()}");
             return false;
         }
-        string apiKey = tokens.First().Token;
-
-        _logger.LogInformation("Bot was launched");
-
-        _bot = new TelegramBotClient(apiKey, cancellationToken: _cts.Token);
-        _bot.OnMessage += OnMessage;
-
-        _isRunning = true;
-        return true;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
