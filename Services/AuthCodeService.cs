@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 
+namespace AutoDice.Services;
+
 public class AuthCodeService
 {
     private readonly IMemoryCache _cache;

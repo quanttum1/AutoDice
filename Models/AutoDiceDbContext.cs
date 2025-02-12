@@ -13,6 +13,8 @@ public class AutoDiceDbContext : DbContext
     public DbSet<CharacterHealth> CharacterHealths { get; set; }
     public DbSet<InventoryItem> InventoryItems { get; set; }
     public DbSet<CharacterInventory> CharacterInventories { get; set; }
+    public DbSet<TgUser> TgUsers { get; set; }
+    public DbSet<TgToken> TgTokens { get; set; }
 
     public AutoDiceDbContext(DbContextOptions<AutoDiceDbContext> options)
         : base(options)

@@ -1,25 +1,26 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+
 using AutoDice.Models;
+using AutoDice.Services;
+using AutoDice.Interfaces;
 
 namespace AutoDice.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ITgBot _bot;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ITgBot bot)
     {
+        _bot = bot;
         _logger = logger;
     }
 
     public IActionResult Index()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
+        ViewData["IsBotRunning"] = _bot.IsRunning;
         return View();
     }
 
