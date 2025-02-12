@@ -43,7 +43,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-Ensure the database is created
+// Ensure the database is created
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
