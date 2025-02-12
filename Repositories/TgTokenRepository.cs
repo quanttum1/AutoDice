@@ -5,7 +5,7 @@ namespace AutoDice.Repositories;
 
 public class TgTokenRepository : IRepository<TgToken>
 {
-    AutoDiceDbContext _context;
+    readonly AutoDiceDbContext _context;
 
     public TgTokenRepository(AutoDiceDbContext ctx)
     {

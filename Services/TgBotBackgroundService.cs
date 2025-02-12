@@ -52,25 +52,23 @@ public class TgBotBackgroundService : BackgroundService, ITgBot
             }
             string apiKey = tokens.First().Token;
 
-            _logger.LogInformation("Bot was launched");
-
             _bot = new TelegramBotClient(apiKey, cancellationToken: _cts.Token);
             _bot.OnMessage += OnMessage;
+
+            _logger.LogInformation("Bot was launched");
 
             _isRunning = true;
             return true;
         } catch (Exception ex)
         {
             _logger.LogError($"Error occurred when tried to start the bot: {ex.ToString()}");
+            _isRunning = false;
             return false;
         }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Launching the bot...");
-        TryStart(); // Try to start the bot at launch
-        _logger.LogInformation("So, waiting...");
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 
@@ -80,7 +78,7 @@ public class TgBotBackgroundService : BackgroundService, ITgBot
         if (msg.Text != null)
         {
             _logger.LogTrace($"Text: '{msg.Text}'");
-            await _bot.SendMessage(msg.Chat.Id, "Hello from ASP.NET Bot!");
+            await _bot.SendMessage(msg.Chat.Id, $"Hello from ASP.NET Bot!");
         }
     }
 

@@ -6,6 +6,7 @@ using AutoDice.Repositories;
 using AutoDice.Models;
 using AutoDice.Services;
 
+// TODO: Create a separate class out of this
 void ConfigureDirectories(WebApplicationBuilder builder)
 {
     string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -48,6 +49,8 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
     db.Database.Migrate(); // Apply migrations automatically
+
+    scope.ServiceProvider.GetRequiredService<ITgBot>().TryStart();
 }
 
 // Configure the HTTP request pipeline.

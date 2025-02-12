@@ -22,6 +22,7 @@ public class HomeController : Controller
     {
         if (!_bot.IsRunning)
         {
+            _logger.LogInformation($"Redirecting to bootstrap {_bot.IsRunning}");
             return RedirectToAction("Index", "Bootstrap");
         }
         return View();
