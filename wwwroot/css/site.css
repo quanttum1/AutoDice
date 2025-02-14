@@ -20,3 +20,27 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.textInput {
+  color: #fff;
+  background-color: #000;
+  border-color: #00f;
+  height: 50px;
+  border-radius: 25px;
+  padding-left: 10px;
+  padding-right: 25px;
+}
+
+.textInput::placeholder {
+  color: #7d7c7c;
+}
+
+.button {
+  height: 50px;
+  border-radius: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #ff0;
+  border-color: #000;
+}
+}

@@ -41,7 +41,7 @@ public class BootstrapController : Controller
 
         if (_bot.IsRunning)
         {
-            return Forbid("Bot is already running");
+            return BadRequest("Bot is already running");
         }
 
         var allTokens = _tokens.GetAll();

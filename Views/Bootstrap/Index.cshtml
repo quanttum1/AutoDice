@@ -3,8 +3,9 @@
 }
 
 <div class="text-center">
-    <input type="text" id="tgTokenInput" placeholder="Your Telegram API key">
-    <button onclick="submit()">Submit</button>
+    <h1 class="display-4">Hi! You need to bootstrap Telegram API key:</h1>
+    <input type="text" id="tgTokenInput" class="textInput" placeholder="Your Telegram API key">
+    <button onclick="submit()" class="button">Submit</button>
     <p id="errorMessage" style="color: red;"></p>
 </div>
 
@@ -25,7 +26,7 @@
         });
 
         if (response.ok) {
-            inputElement.value = ""; // Clear input on success
+            window.location.assign('/');
         } else {
             let errorText = await response.text(); // Get error message from backend
             errorElement.textContent = errorText || "An error occurred.";
