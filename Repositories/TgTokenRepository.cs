@@ -20,25 +20,23 @@ public class TgTokenRepository : IRepository<TgToken>
 
     public void Delete(TgToken value)
     {
-        _context.TgTokens.Remove(GetById(value.Id));
+        var toDelete = GetById(value.Id);
+        if (toDelete == null) throw new KeyNotFoundException("Given TgToken isn't in database");
+        _context.TgTokens.Remove(toDelete);
         _context.SaveChanges();
     }
 
     public void Update(TgToken value)
     {
         var toUpdate = GetById(value.Id);
+        if (toUpdate == null) throw new KeyNotFoundException("Given TgToken isn't in database");
         toUpdate.Token = value.Token;
         _context.SaveChanges();
     }
 
-    public TgToken GetById(int id)
+    public TgToken? GetById(int id)
     {
-        TgToken? result = _context.TgTokens.FirstOrDefault(x => x.Id == id);
-        if (result == null)
-        {
-            throw new KeyNotFoundException($"Couldn't find TgToken with id {id}");
-        }
-        return (TgToken)result;
+        return _context.TgTokens.FirstOrDefault(x => x.Id == id);
     }
 
     public IEnumerable<TgToken> GetAll()

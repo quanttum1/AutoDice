@@ -26,9 +26,10 @@ void ConfigureDirectories(WebApplicationBuilder builder)
 void ConfigureServices(WebApplicationBuilder builder)
 {
     builder.Services.AddMemoryCache(); // For AuthCodeService
-    builder.Services.AddSingleton<AuthCodeService>();
+    builder.Services.AddSingleton<IAuthCodeService<Player>, AuthCodeService>();
 
     builder.Services.AddTransient<IRepository<TgToken>, TgTokenRepository>();
+    builder.Services.AddTransient<IRepository<Player>, PlayerRepository>();
 
     builder.Services.AddSingleton<ITgBot, TgBotBackgroundService>();
     builder.Services.AddHostedService<TgBotBackgroundService>();
@@ -44,13 +45,13 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Ensure the database is created
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AutoDiceDbContext>();
-    db.Database.Migrate(); // Apply migrations automatically
+    db.Database.Migrate(); // Ensure database is created migrations are applied
+    // TODO: Apply migrations only at the first run
 
-    scope.ServiceProvider.GetRequiredService<ITgBot>().TryStart();
+    scope.ServiceProvider.GetRequiredService<ITgBot>().TryStart(); // Try to start tg bot at start
 }
 
 // Configure the HTTP request pipeline.
