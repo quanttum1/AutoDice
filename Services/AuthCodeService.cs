@@ -8,17 +8,20 @@ public class AuthCodeService : IAuthCodeService<Player>
 {
     readonly IMemoryCache _cache;
     readonly Random _random = new();
-    readonly IRepository<Player> _players;
+    readonly IServiceScopeFactory _scopeFactory;
 
-    public AuthCodeService(IMemoryCache cache, IRepository<Player> players)
+    public AuthCodeService(IMemoryCache cache, IServiceScopeFactory scopeFactory)
     {
-        _players = players;
+        _scopeFactory = scopeFactory;
         _cache = cache;
     }
 
     public string CreateCode(Player player)
     {
-        int? id = _players.GetById(player.Id)?.Id;
+        using var scope = _scopeFactory.CreateScope();
+        var players = scope.ServiceProvider.GetRequiredService<IRepository<Player>>();
+
+        int? id = players.GetById(player.Id)?.Id;
         if (id == null)
         {
             throw new KeyNotFoundException("Given player isn't in database");
@@ -31,10 +34,13 @@ public class AuthCodeService : IAuthCodeService<Player>
 
     public Player? Validate(string code)
     {
+        using var scope = _scopeFactory.CreateScope();
+        var players = scope.ServiceProvider.GetRequiredService<IRepository<Player>>();
+
         if (_cache.TryGetValue($"auth_code:{code}", out int id))
         {
             _cache.Remove($"auth_code:{code}"); // Remove after use
-            return _players.GetById(id);
+            return players.GetById(id);
         }
         return null;
     }
