@@ -12,10 +12,11 @@ public class PlayerRepository : IRepository<Player>
         _context = ctx;
     }
 
-    public void Add(Player value)
+    public Player Add(Player value)
     {
         _context.Players.Add(value);
         _context.SaveChanges();
+        return value;
     }
 
     public void Delete(Player value)
@@ -39,7 +40,7 @@ public class PlayerRepository : IRepository<Player>
     {
         if (args.Length != 1) throw new ArgumentException("GetById takes 1 argument");
         if (args[0] is int id)
-            return _context.Players.FirstOrDefault(x => x.Id == id);
+            return GetAll().FirstOrDefault(x => x.Id == id);
         else
             throw new ArgumentException("The argument should be int");
     }

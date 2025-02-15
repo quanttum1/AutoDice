@@ -29,6 +29,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IAuthCodeService<Player>, AuthCodeService>();
 
     builder.Services.AddTransient<IRepository<TgToken>, TgTokenRepository>();
+    builder.Services.AddTransient<IRepository<TgUser>, TgUserRepository>();
     builder.Services.AddTransient<IRepository<Player>, PlayerRepository>();
 
     builder.Services.AddSingleton<ITgBot, TgBotBackgroundService>();

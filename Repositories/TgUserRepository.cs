@@ -1,21 +1,27 @@
 using AutoDice.Models;
 using AutoDice.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoDice.Repositories;
 
 public class TgUserRepository : IRepository<TgUser>
 {
     readonly AutoDiceDbContext _context;
+    readonly IRepository<Player> _players;
 
-    public TgUserRepository(AutoDiceDbContext ctx)
+    public TgUserRepository(AutoDiceDbContext ctx, IRepository<Player> players)
     {
+        _players = players;
         _context = ctx;
     }
 
-    public void Add(TgUser value)
+    public TgUser Add(TgUser value)
     {
+        value.PlayerId = value.Player.Id;
+        value.Player = _players.GetById(value.PlayerId); // TODO: Null-checking
         _context.TgUsers.Add(value);
         _context.SaveChanges();
+        return value;
     }
 
     public void Delete(TgUser value)
@@ -39,14 +45,15 @@ public class TgUserRepository : IRepository<TgUser>
     {
         if (args.Length != 1) throw new ArgumentException("GetById takes 1 argument");
         if (args[0] is long id)
-            return _context.TgUsers.FirstOrDefault(x => x.TgUserId == id);
+            return GetAll().FirstOrDefault(x => x.TgUserId == id);
         else
             throw new ArgumentException("The argument should be long");
     }
 
     public IEnumerable<TgUser> GetAll()
     {
-        return (IEnumerable<TgUser>)_context.TgUsers;
+        return (IEnumerable<TgUser>)_context.TgUsers
+            .Include(x => x.Player);
     }
 }
 

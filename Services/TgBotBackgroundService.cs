@@ -17,21 +17,34 @@ namespace AutoDice.Services;
 
 public class TgBotBackgroundService : BackgroundService, ITgBot
 {
-    private readonly IServiceProvider _serviceProvider;
-    private TelegramBotClient _bot = null!;
-    private CancellationTokenSource _cts = new CancellationTokenSource();
-    private ILogger<TgBotBackgroundService> _logger;
-    private bool _isRunning;
+    private enum UserState
+    {
+        Listening,
+        AwaitingCode
+    }
+
+    readonly IServiceProvider _serviceProvider;
+    TelegramBotClient _bot = null!;
+    CancellationTokenSource _cts = new CancellationTokenSource();
+    ILogger<TgBotBackgroundService> _logger;
+    bool _isRunning;
+    Dictionary<long, UserState> _userStates = new();
+    IAuthCodeService<Player> _authCodeService;
 
     public bool IsRunning 
     {
         get => _isRunning;
     }
 
-    public TgBotBackgroundService(IServiceProvider serviceProvider, ILogger<TgBotBackgroundService> logger)
+    public TgBotBackgroundService(
+        IServiceProvider serviceProvider,
+        ILogger<TgBotBackgroundService> logger,
+        IAuthCodeService<Player> authCodeService
+    )
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _authCodeService = authCodeService;
     }
 
     public bool TryStart()
@@ -74,11 +87,66 @@ public class TgBotBackgroundService : BackgroundService, ITgBot
 
     private async Task OnMessage(Message msg, UpdateType type)
     {
-        _logger.LogTrace($"Got a message from {msg.Chat.Id}");
-        if (msg.Text != null)
+        try
         {
-            _logger.LogTrace($"Text: '{msg.Text}'");
-            await _bot.SendMessage(msg.Chat.Id, $"Hello from ASP.NET Bot!");
+            using var scope = _serviceProvider.CreateScope();
+            var tgUsers = scope.ServiceProvider.GetRequiredService<IRepository<TgUser>>();
+
+            _logger.LogTrace($"Got a message from {msg.Chat.Id}");
+            if (msg.Text != null)
+            {
+                _logger.LogTrace($"Text: '{msg.Text}'");
+
+                var user = tgUsers.GetById(msg.Chat.Id);
+                var chatId = msg.Chat.Id;
+                
+                if (tgUsers.GetAll().Count() == 0)
+                {
+                    var players = scope.ServiceProvider.GetRequiredService<IRepository<Player>>();
+                    var player = players.Add(new Player { Name = "Game Master", IsGameMaster = true });
+                    tgUsers.Add(new TgUser { TgUserId = chatId, Player = player});
+                    await _bot.SendMessage(chatId, "You are the game master now. Use /getlogincode command to get your login code");
+                    return;
+                }
+
+                if (user != null)
+                {
+                    if (msg.Text == "/getlogincode")
+                    {
+                        var code = _authCodeService.CreateCode(user.Player);
+                        await _bot.SendMessage(chatId, $"Your code is {code}. It's valid for 5 minutes");
+                    } else
+                    {
+                        await _bot.SendMessage(chatId, "Invalid action. Use /getlogincode command to get your login code");
+                    }
+                    return;
+                }
+
+                if (!_userStates.ContainsKey(chatId))
+                {
+                    await _bot.SendMessage(chatId, "Hi! Enter your login key:");
+                    _userStates[chatId] = UserState.AwaitingCode;
+                    return;
+                }
+                
+                if (_userStates[chatId] == UserState.AwaitingCode)
+                {
+                    var player = _authCodeService.Validate(msg.Text);
+                    if (player == null)
+                    {
+                        await _bot.SendMessage(chatId, "Sorry, the code isn't valid. Try again");
+                        return;
+                    }
+
+                    tgUsers.Add(new TgUser{ TgUserId = chatId, Player = (Player)player });
+                    await _bot.SendMessage(chatId, "You've logged in successfully. You can now use /getlogincode command to get a new login code");
+                    return;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error in Telegram bot: {e}");
         }
     }
 
