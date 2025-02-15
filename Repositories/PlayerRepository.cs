@@ -35,9 +35,13 @@ public class PlayerRepository : IRepository<Player>
         _context.SaveChanges();
     }
 
-    public Player? GetById(int id)
+    public Player? GetById(params object[] args)
     {
-        return _context.Players.FirstOrDefault(x => x.Id == id);
+        if (args.Length != 1) throw new ArgumentException("GetById takes 1 argument");
+        if (args[0] is int id)
+            return _context.Players.FirstOrDefault(x => x.Id == id);
+        else
+            throw new ArgumentException("The argument should be int");
     }
 
     public IEnumerable<Player> GetAll()

@@ -34,9 +34,13 @@ public class TgTokenRepository : IRepository<TgToken>
         _context.SaveChanges();
     }
 
-    public TgToken? GetById(int id)
+    public TgToken? GetById(params object[] args)
     {
-        return _context.TgTokens.FirstOrDefault(x => x.Id == id);
+        if (args.Length != 1) throw new ArgumentException("GetById takes 1 argument");
+        if (args[0] is int id)
+            return _context.TgTokens.FirstOrDefault(x => x.Id == id);
+        else
+            throw new ArgumentException("The argument should be int");
     }
 
     public IEnumerable<TgToken> GetAll()
