@@ -1,23 +1,25 @@
 @{
-    ViewData["Title"] = "Bootstrap";
+    ViewData["Title"] = "Login";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Hi! You need to bootstrap Telegram API key:</h1>
-    <input type="text" id="tgTokenInput" class="textInput" placeholder="Your Telegram API key">
+    <h1 class="display-4">Login</h1>
+    <p>Enter your login key. You can get one using 
+    <a href="@ViewData["BotLink"]" target="_blank" rel="noopener noreferrer">the Telegram bot</a></p>
+    <input type="text" id="loginCodeInput" class="textInput" placeholder="Your Telegram API key">
     <button onclick="submit()" class="button">Submit</button>
     <p id="errorMessage" style="color: red;"></p>
 </div>
 
 <script>
     async function submit() {
-        let inputElement = document.getElementById("tgTokenInput");
+        let inputElement = document.getElementById("loginCodeInput");
         let errorElement = document.getElementById("errorMessage");
         let inputValue = inputElement.value;
 
         errorElement.textContent = ""; // Clear previous errors
 
-        let response = await fetch('/Bootstrap/Submit', {
+        let response = await fetch('/Login/Submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,10 +28,11 @@
         });
 
         if (response.ok) {
-            window.location.assign('/');
+            window.location.assign('/'); // Redirect to the home page
         } else {
             let errorText = await response.text(); // Get error message from backend
             errorElement.textContent = errorText || "An error occurred.";
         }
     }
 </script>
+

@@ -12,6 +12,7 @@ using Telegram.Bot.Types.Enums;
 
 using AutoDice.Interfaces;
 using AutoDice.Models;
+using AutoDice.Exceptions;
 
 namespace AutoDice.Services;
 
@@ -147,6 +148,17 @@ public class TgBotBackgroundService : BackgroundService, ITgBot
         catch (Exception e)
         {
             _logger.LogError($"Error in Telegram bot: {e}");
+        }
+    }
+
+    public string Username {
+        get
+        {
+            string? username = _bot.GetMe().Result?.Username;
+            if (username == null)
+                throw new FailedToGetUsernameException(
+                    "Failed to get the username of the bot. Is it running?");
+            return username;
         }
     }
 

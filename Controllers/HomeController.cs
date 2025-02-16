@@ -9,23 +9,40 @@ namespace AutoDice.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly ITgBot _bot;
+    readonly ILogger<HomeController> _logger;
+    readonly ITgBot _bot;
+    readonly IRepository<WebUserSession> _webUserSessions;
 
-    public HomeController(ILogger<HomeController> logger, ITgBot bot)
+    public HomeController(ILogger<HomeController> logger, ITgBot bot, IRepository<WebUserSession> wus)
     {
         _bot = bot;
         _logger = logger;
+        _webUserSessions = wus;
     }
 
     public IActionResult Index()
     {
         if (!_bot.IsRunning)
         {
-            _logger.LogInformation($"Redirecting to bootstrap {_bot.IsRunning}");
+            _logger.LogInformation($"Redirecting to bootstrap");
             return RedirectToAction("Index", "Bootstrap");
         }
-        return View();
+
+        var sessionCookie = Request.Cookies["Session"];
+
+        if (sessionCookie == null)
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
+        var session = _webUserSessions.GetById(Guid.Parse(sessionCookie));
+
+        if (session == null)
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
+        return View(session.Player);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

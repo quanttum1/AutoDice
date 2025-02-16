@@ -31,6 +31,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddTransient<IRepository<TgToken>, TgTokenRepository>();
     builder.Services.AddTransient<IRepository<TgUser>, TgUserRepository>();
     builder.Services.AddTransient<IRepository<Player>, PlayerRepository>();
+    builder.Services.AddTransient<IRepository<WebUserSession>, WebUserSessionRepository>();
 
     builder.Services.AddSingleton<ITgBot, TgBotBackgroundService>();
     builder.Services.AddHostedService<TgBotBackgroundService>();

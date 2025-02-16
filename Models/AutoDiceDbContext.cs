@@ -15,6 +15,7 @@ public class AutoDiceDbContext : DbContext
     public DbSet<CharacterInventory> CharacterInventories { get; set; }
     public DbSet<TgUser> TgUsers { get; set; }
     public DbSet<TgToken> TgTokens { get; set; }
+    public DbSet<WebUserSession> WebUserSessions { get; set; }
 
     public AutoDiceDbContext(DbContextOptions<AutoDiceDbContext> options)
         : base(options)

@@ -31,7 +31,7 @@ public class BootstrapController : Controller
         return View();
     }
 
-    [HttpPost("/Submit")]
+    [HttpPost("/Bootstrap/Submit")]
     public IActionResult Submit([FromBody] InputModel model)
     {
         if (string.IsNullOrWhiteSpace(model.Value))

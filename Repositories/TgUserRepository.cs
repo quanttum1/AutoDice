@@ -18,7 +18,11 @@ public class TgUserRepository : IRepository<TgUser>
     public TgUser Add(TgUser value)
     {
         value.PlayerId = value.Player.Id;
-        value.Player = _players.GetById(value.PlayerId); // TODO: Null-checking
+
+        var player = _players.GetById(value.PlayerId);
+        if (player == null) player = _players.Add(value.Player);
+        
+        value.Player = player;
         _context.TgUsers.Add(value);
         _context.SaveChanges();
         return value;
